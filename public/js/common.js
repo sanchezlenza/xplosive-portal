@@ -10,6 +10,7 @@ async function initNav(activePage) {
   const navLinks = document.getElementById('navlinks');
   if (navLinks) {
     const links = [
+      { href: '/index.html', label: 'Home' },
       { href: '/dashboard.html', label: 'Dashboard' },
       { href: '/calendario.html', label: 'Calendar' },
       { href: '/eventos.html', label: 'Events' },
