@@ -9,6 +9,24 @@ const PORT = process.env.PORT || 3000;
 
 // Railway persistent volume mounts here; falls back to local /data for dev
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+const DEFAULT_DATA_DIR = path.join(__dirname, 'data');
+
+// If DATA_DIR points to an empty persistent volume (e.g. first deploy on Railway),
+// seed it with the default JSON files bundled in the repo so login/schedule/etc. work.
+function seedDataDirIfEmpty() {
+  if (DATA_DIR === DEFAULT_DATA_DIR) return; // nothing to seed, already using bundled data
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+  const defaultFiles = fs.readdirSync(DEFAULT_DATA_DIR);
+  for (const file of defaultFiles) {
+    const destPath = path.join(DATA_DIR, file);
+    if (!fs.existsSync(destPath)) {
+      fs.copyFileSync(path.join(DEFAULT_DATA_DIR, file), destPath);
+      console.log(`Seeded ${file} into ${DATA_DIR}`);
+    }
+  }
+}
+seedDataDirIfEmpty();
 
 app.use(express.json());
 app.use(cookieParser());
