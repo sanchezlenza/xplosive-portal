@@ -81,6 +81,17 @@ app.get('/api/events', requireLogin, (req, res) => res.json(readJSON('events.jso
 app.get('/api/competitions', requireLogin, (req, res) => res.json(readJSON('competitions.json')));
 app.get('/api/supplies', requireLogin, (req, res) => res.json(readJSON('supplies.json')));
 
+// ---------- users (admin only — for adding parent PINs) ----------
+app.get('/api/users', requireAdmin, (req, res) => res.json(readJSON('users.json')));
+app.put('/api/users', requireAdmin, (req, res) => {
+  const users = req.body;
+  const pins = users.map(u => String(u.pin));
+  const hasDuplicates = new Set(pins).size !== pins.length;
+  if (hasDuplicates) return res.status(400).json({ error: 'Duplicate PIN — each user needs a unique PIN.' });
+  writeJSON('users.json', users);
+  res.json({ ok: true });
+});
+
 // ---------- write endpoints (admin only) ----------
 app.put('/api/schedule', requireAdmin, (req, res) => {
   writeJSON('schedule.json', req.body);
@@ -100,11 +111,9 @@ app.put('/api/supplies', requireAdmin, (req, res) => {
 });
 
 // ---------- static pages ----------
+// index.html now lives in public/ as the public landing page,
+// so express.static serves it automatically at "/" — no redirect needed.
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-  res.redirect(req.session.user ? '/dashboard.html' : '/login.html');
-});
 
 app.listen(PORT, () => {
   console.log(`Xplosive Portal running on port ${PORT}`);
