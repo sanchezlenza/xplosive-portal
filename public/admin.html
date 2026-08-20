@@ -11,10 +11,20 @@
     background:none; border:1px solid var(--line); color:var(--grey);
     padding:9px 16px; border-radius:999px; font-size:12.5px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;
   }
-  .tab-btn.active{ color:var(--black); background:var(--gold); border-color:var(--gold); }
+  .tab-btn.active{ color:#fff; background:var(--magenta); border-color:var(--magenta); }
   .tab-panel{ display:none; }
   .tab-panel.active{ display:block; }
-  .save-msg{ color:var(--gold); font-size:12.5px; margin-left:10px; }
+  .save-msg{ color:var(--gold-dim); font-size:12.5px; margin-left:10px; font-weight:600; }
+  .day-block{ margin-bottom:16px; }
+  .day-block-head{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .day-block-head input{ max-width:220px; font-weight:700; }
+  .class-row{ display:grid; grid-template-columns:1fr 1fr auto; gap:10px; margin-bottom:8px; align-items:center; }
+  .class-row input{ margin:0; }
+  .icon-btn{
+    background:none; border:1px solid var(--line); color:var(--danger); border-radius:8px;
+    padding:9px 12px; font-size:12px; font-weight:700;
+  }
+  .user-row{ display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:10px; align-items:center; margin-bottom:10px; }
 </style>
 </head>
 <body>
@@ -27,18 +37,32 @@
     <div class="page-head">
       <div class="eyebrow">Staff Only</div>
       <h1>Admin Panel</h1>
-      <p>Edit the calendar, events, competitions, and supply links — changes are live immediately for parents.</p>
+      <p>Edit the calendar, events, competitions, supply links, and parent accounts — changes are live immediately.</p>
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" data-tab="events">Events</button>
+      <button class="tab-btn active" data-tab="users">Users</button>
+      <button class="tab-btn" data-tab="events">Events</button>
       <button class="tab-btn" data-tab="competitions">Competitions</button>
       <button class="tab-btn" data-tab="supplies">Supplies</button>
-      <button class="tab-btn" data-tab="schedule">Calendar (JSON)</button>
+      <button class="tab-btn" data-tab="schedule">Calendar</button>
+    </div>
+
+    <!-- USERS -->
+    <div class="tab-panel active" id="panel-users">
+      <p style="color:var(--grey); font-size:13px; margin-bottom:16px;">
+        Add a parent account with their own PIN, or manage existing accounts. Each PIN must be unique.
+      </p>
+      <div id="userRows"></div>
+      <button class="btn btn-ghost" id="addUser">+ Add Parent</button>
+      <div style="margin-top:18px;">
+        <button class="btn btn-primary" id="saveUsers">Save Users</button>
+        <span class="save-msg" id="usersMsg"></span>
+      </div>
     </div>
 
     <!-- EVENTS -->
-    <div class="tab-panel active" id="panel-events">
+    <div class="tab-panel" id="panel-events">
       <div id="eventsList"></div>
       <button class="btn btn-ghost" id="addEvent">+ Add Event</button>
       <div style="margin-top:18px;">
@@ -67,13 +91,14 @@
       </div>
     </div>
 
-    <!-- SCHEDULE (raw JSON, since it's nested by day) -->
+    <!-- SCHEDULE (visual editor, day by day) -->
     <div class="tab-panel" id="panel-schedule">
-      <p style="color:var(--grey); font-size:13px; margin-bottom:12px;">
-        Edit the weekly schedule as JSON. Each day has a list of classes with a time and name.
+      <p style="color:var(--grey); font-size:13px; margin-bottom:16px;">
+        Edit each day's classes below — time and name. Changes save for the whole week at once.
       </p>
-      <textarea id="scheduleJson" style="width:100%; min-height:420px; background:#141017; border:1px solid var(--line); color:var(--white); border-radius:10px; padding:16px; font-family:monospace; font-size:13px;"></textarea>
-      <div style="margin-top:14px;">
+      <div id="scheduleDays"></div>
+      <button class="btn btn-ghost" id="addDay">+ Add Day</button>
+      <div style="margin-top:18px;">
         <button class="btn btn-primary" id="saveSchedule">Save Calendar</button>
         <span class="save-msg" id="scheduleMsg"></span>
       </div>
@@ -83,9 +108,51 @@
   <script src="/js/common.js"></script>
   <script>
     let user;
-    let events = [], comps = [], supplies = [], schedule = {};
+    let events = [], comps = [], supplies = [], schedule = { season:'', updatedAt:'', days:[] }, users = [];
 
     function uid(prefix){ return prefix + Math.random().toString(36).slice(2,8); }
+    function flash(id){
+      const el = document.getElementById(id);
+      el.style.color = 'var(--gold-dim)';
+      el.textContent = 'Saved ✓';
+      setTimeout(()=> el.textContent = '', 2000);
+    }
+    function flashError(id, msg){
+      const el = document.getElementById(id);
+      el.style.color = 'var(--danger)';
+      el.textContent = msg;
+    }
+
+    // ---------- USERS ----------
+    function renderUsers(){
+      document.getElementById('userRows').innerHTML = users.map((u,i) => `
+        <div class="user-row">
+          <input data-i="${i}" data-f="name" value="${u.name}" placeholder="Name">
+          <input data-i="${i}" data-f="pin" value="${u.pin}" placeholder="PIN" maxlength="6">
+          <select data-i="${i}" data-f="role">
+            <option value="parent" ${u.role==='parent'?'selected':''}>Parent</option>
+            <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
+          </select>
+          <button class="icon-btn" data-del="${i}">Remove</button>
+        </div>
+      `).join('');
+      document.querySelectorAll('#userRows input, #userRows select').forEach(el => {
+        el.addEventListener('input', () => { users[el.dataset.i][el.dataset.f] = el.value; });
+        el.addEventListener('change', () => { users[el.dataset.i][el.dataset.f] = el.value; });
+      });
+      document.querySelectorAll('#userRows [data-del]').forEach(btn => {
+        btn.addEventListener('click', () => { users.splice(btn.dataset.del,1); renderUsers(); });
+      });
+    }
+    document.getElementById('addUser').addEventListener('click', () => {
+      users.push({ name:'New Parent', pin: String(Math.floor(1000 + Math.random()*9000)), role:'parent' });
+      renderUsers();
+    });
+    document.getElementById('saveUsers').addEventListener('click', async () => {
+      const res = await fetch('/api/users', { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(users) });
+      if (res.ok) flash('usersMsg');
+      else { const data = await res.json(); flashError('usersMsg', data.error || 'Could not save.'); }
+    });
 
     // ---------- EVENTS ----------
     function renderEvents(){
@@ -176,24 +243,62 @@
       flash('supMsg');
     });
 
-    // ---------- SCHEDULE ----------
-    document.getElementById('saveSchedule').addEventListener('click', async () => {
-      try {
-        const parsed = JSON.parse(document.getElementById('scheduleJson').value);
-        await fetch('/api/schedule', { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(parsed) });
-        flash('scheduleMsg');
-      } catch(e) {
-        document.getElementById('scheduleMsg').textContent = 'Invalid JSON — not saved.';
-        document.getElementById('scheduleMsg').style.color = 'var(--danger)';
-      }
-    });
+    // ---------- SCHEDULE (visual, day by day) ----------
+    function renderSchedule(){
+      document.getElementById('scheduleDays').innerHTML = schedule.days.map((d, di) => `
+        <div class="admin-item day-block">
+          <div class="day-block-head">
+            <input data-di="${di}" data-f="day" value="${d.day}">
+            <button class="btn btn-ghost" data-addclass="${di}" style="padding:8px 14px; font-size:11px;">+ Add Class</button>
+            <button class="icon-btn" data-delday="${di}">Remove Day</button>
+          </div>
+          ${d.classes.map((c, ci) => `
+            <div class="class-row">
+              <input data-di="${di}" data-ci="${ci}" data-f="time" value="${c.time}" placeholder="Time (e.g. 5:00 PM)">
+              <input data-di="${di}" data-ci="${ci}" data-f="name" value="${c.name}" placeholder="Class name">
+              <button class="icon-btn" data-delclass="${di}:${ci}">✕</button>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
 
-    function flash(id){
-      const el = document.getElementById(id);
-      el.style.color = 'var(--gold)';
-      el.textContent = 'Saved ✓';
-      setTimeout(()=> el.textContent = '', 2000);
+      document.querySelectorAll('#scheduleDays .day-block-head input').forEach(el => {
+        el.addEventListener('input', () => { schedule.days[el.dataset.di].day = el.value; });
+      });
+      document.querySelectorAll('#scheduleDays .class-row input').forEach(el => {
+        el.addEventListener('input', () => {
+          schedule.days[el.dataset.di].classes[el.dataset.ci][el.dataset.f] = el.value;
+        });
+      });
+      document.querySelectorAll('[data-addclass]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          schedule.days[btn.dataset.addclass].classes.push({ time:'', name:'' });
+          renderSchedule();
+        });
+      });
+      document.querySelectorAll('[data-delclass]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const [di, ci] = btn.dataset.delclass.split(':');
+          schedule.days[di].classes.splice(ci, 1);
+          renderSchedule();
+        });
+      });
+      document.querySelectorAll('[data-delday]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          schedule.days.splice(btn.dataset.delday, 1);
+          renderSchedule();
+        });
+      });
     }
+    document.getElementById('addDay').addEventListener('click', () => {
+      schedule.days.push({ day: 'New Day', classes: [] });
+      renderSchedule();
+    });
+    document.getElementById('saveSchedule').addEventListener('click', async () => {
+      schedule.updatedAt = new Date().toISOString().slice(0,10);
+      await fetch('/api/schedule', { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(schedule) });
+      flash('scheduleMsg');
+    });
 
     // ---------- TABS ----------
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -213,16 +318,16 @@
         document.querySelector('main').innerHTML = '<p>You do not have access to this page.</p>';
         return;
       }
-      const [evRes, compRes, supRes, schRes] = await Promise.all([
-        fetch('/api/events'), fetch('/api/competitions'), fetch('/api/supplies'), fetch('/api/schedule')
+      const [evRes, compRes, supRes, schRes, usersRes] = await Promise.all([
+        fetch('/api/events'), fetch('/api/competitions'), fetch('/api/supplies'), fetch('/api/schedule'), fetch('/api/users')
       ]);
       events = await evRes.json();
       comps = await compRes.json();
       supplies = await supRes.json();
       schedule = await schRes.json();
+      users = await usersRes.json();
 
-      renderEvents(); renderComps(); renderSup();
-      document.getElementById('scheduleJson').value = JSON.stringify(schedule, null, 2);
+      renderEvents(); renderComps(); renderSup(); renderSchedule(); renderUsers();
     });
   </script>
 </body>
