@@ -1,0 +1,23 @@
+[
+  {
+    "id": "comp1",
+    "name": "South Florida Regional",
+    "location": "South Florida",
+    "date": "TBD",
+    "status": "tbd"
+  },
+  {
+    "id": "comp2",
+    "name": "Regional Classic",
+    "location": "Jacksonville, FL",
+    "date": "TBD",
+    "status": "tbd"
+  },
+  {
+    "id": "comp3",
+    "name": "National Championships",
+    "location": "Orlando, FL",
+    "date": "TBD",
+    "status": "tbd"
+  }
+]

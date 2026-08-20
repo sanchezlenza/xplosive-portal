@@ -1,0 +1,55 @@
+{
+  "season": "2026-2027",
+  "updatedAt": "2026-08-20",
+  "days": [
+    {
+      "day": "Monday",
+      "classes": [
+        { "time": "5:00 PM", "name": "Ballet 2" },
+        { "time": "6:00 PM", "name": "Ballet 3" },
+        { "time": "7:00 – 7:45 PM", "name": "Pointe" },
+        { "time": "7:45 – 8:30 PM", "name": "Jazz/Lyrical 3" }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "classes": [
+        { "time": "5:45 – 6:45 PM", "name": "Acro 2" },
+        { "time": "6:45 – 7:30 PM", "name": "Ballroom 1" },
+        { "time": "7:30 – 8:30 PM", "name": "Acro 3" },
+        { "time": "8:30 – 9:15 PM", "name": "Ballroom 2" }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "classes": [
+        { "time": "5:30 – 6:15 PM", "name": "Jr Small – Wil" },
+        { "time": "6:15 – 7:00 PM", "name": "Grand Line" },
+        { "time": "7:00 – 7:45 PM", "name": "Teen Line" },
+        { "time": "7:45 – 8:30 PM", "name": "Senior Line" },
+        { "time": "8:30 – 9:15 PM", "name": "Senior Small – Ms Gaby" }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "classes": [
+        { "time": "5:30 – 6:15 PM", "name": "Jazz/Lyrical 2" },
+        { "time": "6:15 – 7:00 PM", "name": "Teen Large" },
+        { "time": "7:00 – 9:30 PM", "name": "Aileen Tech/Groups" }
+      ]
+    },
+    {
+      "day": "Friday",
+      "classes": [
+        { "time": "6:00 – 6:45 PM", "name": "Teen Small" },
+        { "time": "6:45 – 7:30 PM", "name": "Teen Large" }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "classes": [
+        { "time": "9:00 AM – 2:00 PM", "name": "Private Training (by appointment)" }
+      ]
+    }
+  ]
+}

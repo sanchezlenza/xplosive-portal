@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Studio Admin",
+    "pin": "1234",
+    "role": "admin"
+  },
+  {
+    "name": "Xplosive Parent",
+    "pin": "0000",
+    "role": "parent"
+  }
+]

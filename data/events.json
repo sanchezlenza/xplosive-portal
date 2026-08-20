@@ -1,0 +1,26 @@
+[
+  {
+    "id": "evt1",
+    "tag": "Recital",
+    "title": "Spring Showcase",
+    "date": "TBD",
+    "location": "TBD",
+    "description": "Annual end-of-season performance for all classes."
+  },
+  {
+    "id": "evt2",
+    "tag": "Meeting",
+    "title": "Parent Info Night",
+    "date": "TBD",
+    "location": "Studio",
+    "description": "Season overview, costume orders, and competition details."
+  },
+  {
+    "id": "evt3",
+    "tag": "Fundraiser",
+    "title": "Team Fundraiser",
+    "date": "TBD",
+    "location": "TBD",
+    "description": "Helping cover travel costs for out-of-town competitions."
+  }
+]

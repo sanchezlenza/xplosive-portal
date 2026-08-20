@@ -1,0 +1,58 @@
+[
+  {
+    "id": "sup1",
+    "category": "Shoes",
+    "title": "Ballet & Jazz Shoes",
+    "description": "Studio-approved footwear list by class level.",
+    "url": ""
+  },
+  {
+    "id": "sup2",
+    "category": "Uniform",
+    "title": "Class Uniform",
+    "description": "Required leotard, tights, and rehearsal wear.",
+    "url": ""
+  },
+  {
+    "id": "sup3",
+    "category": "Acro",
+    "title": "Acro Wear & Grips",
+    "description": "Recommended gear for acrobatics classes.",
+    "url": ""
+  },
+  {
+    "id": "sup4",
+    "category": "Competition",
+    "title": "Team Warm-Ups",
+    "description": "Official Xplosive competition team apparel.",
+    "url": ""
+  },
+  {
+    "id": "sup5",
+    "category": "General",
+    "title": "Shop on Amazon",
+    "description": "Xplosive's Amazon storefront for dancewear and studio essentials.",
+    "url": "https://a.co/d/0gUinZRp"
+  },
+  {
+    "id": "sup6",
+    "category": "General",
+    "title": "Shop on Amazon (2)",
+    "description": "Pending: confirm which category this belongs to.",
+    "url": "https://a.co/d/09YFbC0x"
+  },
+  {
+    "id": "sup7",
+    "category": "General",
+    "title": "Shop on Amazon (3)",
+    "description": "Pending: confirm which category this belongs to.",
+    "url": "https://a.co/d/0grKYS5f"
+  },
+  {
+    "id": "sup8",
+    "category": "General",
+    "title": "Xplosive Amazon Gift List",
+    "description": "Studio gift/wish list on Amazon — pending confirmation of what this is for (e.g. teacher appreciation, competition team fundraiser, etc.).",
+    "url": "https://www.amazon.com/registries/gl/guest-view/HX4TXR7QG8PZ?language=en-US"
+  }
+]
