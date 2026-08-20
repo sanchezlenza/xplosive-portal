@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Xplosive Dance Company</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">XPLOSIVE<span>.</span></div>
+    <div class="navlinks" id="navlinks"></div>
+  </nav>
+
+  <main>
+    <div class="page-head">
+      <div class="eyebrow">Parent Portal</div>
+      <h1 id="greeting">Welcome</h1>
+      <p>Everything for the Xplosive family — calendar, events, competitions, and supplies — in one place.</p>
+    </div>
+
+    <div class="grid3">
+      <a class="card" href="/calendario.html">
+        <span class="tag">Calendar</span>
+        <h3>Studio Schedule</h3>
+        <p>See this week's classes by day.</p>
+      </a>
+      <a class="card" href="/eventos.html">
+        <span class="tag">Events</span>
+        <h3>Upcoming Events</h3>
+        <p>Recitals, parent nights, and fundraisers.</p>
+      </a>
+      <a class="card" href="/competencias.html">
+        <span class="tag">Competitions</span>
+        <h3>Competition Schedule</h3>
+        <p>Dates, locations, and status for the season.</p>
+      </a>
+      <a class="card" href="/supplies.html">
+        <span class="tag">Supplies</span>
+        <h3>Dancewear & Supplies</h3>
+        <p>Approved shoes, uniform, and gear links.</p>
+      </a>
+    </div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script>
+    initNav('/dashboard.html').then(user => {
+      if (user) document.getElementById('greeting').textContent = `Welcome, ${user.name}`;
+    });
+  </script>
+</body>
+</html>

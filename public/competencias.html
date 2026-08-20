@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitions — Xplosive Dance Company</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">XPLOSIVE<span>.</span></div>
+    <div class="navlinks" id="navlinks"></div>
+  </nav>
+
+  <main>
+    <div class="page-head">
+      <div class="eyebrow">Competition Team</div>
+      <h1>Competition Schedule</h1>
+      <p>4–5 competitions per season across South Florida, plus regional/national trips.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Competition</th><th>Location</th><th>Status</th></tr>
+      </thead>
+      <tbody id="compRows"></tbody>
+    </table>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script>
+    initNav('/competencias.html').then(async user => {
+      if (!user) return;
+      const res = await fetch('/api/competitions');
+      const comps = await res.json();
+      document.getElementById('compRows').innerHTML = comps.map(c => `
+        <tr>
+          <td class="date">${c.date}</td>
+          <td>${c.name}</td>
+          <td class="loc">${c.location}</td>
+          <td><span class="status ${c.status}">${c.status === 'confirmed' ? 'Confirmed' : 'TBD'}</span></td>
+        </tr>
+      `).join('') || '<tr><td colspan="4">No competitions posted yet.</td></tr>';
+    });
+  </script>
+</body>
+</html>

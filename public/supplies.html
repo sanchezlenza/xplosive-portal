@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supplies — Xplosive Dance Company</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">XPLOSIVE<span>.</span></div>
+    <div class="navlinks" id="navlinks"></div>
+  </nav>
+
+  <main>
+    <div class="page-head">
+      <div class="eyebrow">Shop</div>
+      <h1>Dancewear & Supplies</h1>
+      <p>Approved shoes, tights, and rehearsal wear — linked directly so there's no guessing.</p>
+    </div>
+
+    <div class="grid2" id="suppliesGrid"></div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script>
+    initNav('/supplies.html').then(async user => {
+      if (!user) return;
+      const res = await fetch('/api/supplies');
+      const supplies = await res.json();
+      document.getElementById('suppliesGrid').innerHTML = supplies.map(s => `
+        <div class="card">
+          <span class="tag">${s.category}</span>
+          <h3>${s.title}</h3>
+          <p>${s.description}</p>
+          ${s.url
+            ? `<a class="link" href="${s.url}" target="_blank" rel="noopener">Shop now →</a>`
+            : `<a class="link" style="color:var(--grey)">Link coming soon</a>`}
+        </div>
+      `).join('') || '<p style="color:var(--grey)">No supplies posted yet.</p>';
+    });
+  </script>
+</body>
+</html>

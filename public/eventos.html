@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events — Xplosive Dance Company</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">XPLOSIVE<span>.</span></div>
+    <div class="navlinks" id="navlinks"></div>
+  </nav>
+
+  <main>
+    <div class="page-head">
+      <div class="eyebrow">Studio Life</div>
+      <h1>Upcoming Events</h1>
+      <p>Recitals, parent nights, fundraisers, and studio gatherings.</p>
+    </div>
+
+    <div class="grid3" id="eventsGrid"></div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script>
+    initNav('/eventos.html').then(async user => {
+      if (!user) return;
+      const res = await fetch('/api/events');
+      const events = await res.json();
+      const grid = document.getElementById('eventsGrid');
+      grid.innerHTML = events.map(e => `
+        <div class="card">
+          <span class="tag">${e.tag}</span>
+          <h3>${e.title}</h3>
+          <p class="meta">${e.date} · ${e.location}</p>
+          <p>${e.description}</p>
+        </div>
+      `).join('') || '<p style="color:var(--grey)">No events posted yet.</p>';
+    });
+  </script>
+</body>
+</html>

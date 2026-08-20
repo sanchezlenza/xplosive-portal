@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar — Xplosive Dance Company</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">XPLOSIVE<span>.</span></div>
+    <div class="navlinks" id="navlinks"></div>
+  </nav>
+
+  <main>
+    <div class="page-head">
+      <div class="eyebrow">Studio Calendar</div>
+      <h1>Weekly Class Schedule</h1>
+      <p id="seasonLabel">Class days and times by day of the week.</p>
+    </div>
+
+    <div class="days-grid" id="daysGrid"></div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script>
+    initNav('/calendario.html').then(async user => {
+      if (!user) return;
+      const res = await fetch('/api/schedule');
+      const data = await res.json();
+      document.getElementById('seasonLabel').textContent = `Season ${data.season} — updated ${data.updatedAt}`;
+
+      const grid = document.getElementById('daysGrid');
+      grid.innerHTML = data.days.map(d => `
+        <div class="day-card">
+          <div class="day-name">${d.day}</div>
+          <div class="classes">
+            ${d.classes.map(c => `
+              <div class="class-item">
+                <span class="time">${c.time}</span>
+                <span class="name">${c.name}</span>
+              </div>
+            `).join('') || '<div class="class-item"><span class="name">No classes</span></div>'}
+          </div>
+        </div>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

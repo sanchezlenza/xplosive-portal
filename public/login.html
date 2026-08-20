@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xplosive Dance Company — Login</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="brand">XPLOSIVE<span>.</span></div>
+      <p class="sub">Parent Portal — enter your PIN</p>
+      <div class="error" id="errorMsg"></div>
+      <input class="pin-input" id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="••••">
+      <button class="btn btn-primary" style="width:100%" id="loginBtn">Enter</button>
+    </div>
+  </div>
+
+  <script>
+    const pinInput = document.getElementById('pinInput');
+    const errorMsg = document.getElementById('errorMsg');
+    const loginBtn = document.getElementById('loginBtn');
+
+    async function attemptLogin() {
+      errorMsg.textContent = '';
+      const pin = pinInput.value.trim();
+      if (!pin) return;
+      const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin })
+      });
+      if (res.ok) {
+        window.location.href = '/dashboard.html';
+      } else {
+        errorMsg.textContent = 'Incorrect PIN. Try again.';
+        pinInput.value = '';
+        pinInput.focus();
+      }
+    }
+
+    loginBtn.addEventListener('click', attemptLogin);
+    pinInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptLogin(); });
+    pinInput.focus();
+  </script>
+</body>
+</html>
