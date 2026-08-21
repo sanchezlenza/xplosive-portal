@@ -22,5 +22,15 @@
     "date": "TBD",
     "location": "TBD",
     "description": "Helping cover travel costs for out-of-town competitions."
+  },
+  {
+    "id": "evt4",
+    "tag": "Pool",
+    "title": "Pool Party",
+    "date": "8/29/26",
+    "location": "TBD",
+    "description": "Xplosive Pool Party",
+    "link": "/evento-poolparty.html",
+    "linkLabel": "View Food Sign-Up List"
   }
 ]
