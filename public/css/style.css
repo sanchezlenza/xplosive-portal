@@ -49,7 +49,7 @@ nav.topnav{
 }
 .brand{ font-size:22px; color:var(--ink); display:inline-flex; align-items:center; }
 .brand span{color:var(--teal);}
-.brand-logo{ height:34px; width:auto; display:block; }
+.brand-logo{ height:56px; width:auto; display:block; }
 .navlinks{ display:flex; gap:26px; flex-wrap:wrap; align-items:center; }
 .navlinks a{
   font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
@@ -160,7 +160,7 @@ td.loc{ color:var(--grey); }
   box-shadow:0 10px 30px rgba(32,26,38,0.08);
 }
 .login-card .brand{ margin-bottom:6px; justify-content:center; }
-.login-card .brand-logo{ height:52px; }
+.login-card .brand-logo{ height:88px; }
 .login-card p.sub{ color:var(--grey); font-size:13px; margin-bottom:28px; }
 .pin-input{
   width:100%; text-align:center; font-size:26px; letter-spacing:0.4em; padding:14px;
