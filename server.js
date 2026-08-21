@@ -92,6 +92,17 @@ app.put('/api/users', requireAdmin, (req, res) => {
   res.json({ ok: true });
 });
 
+// ---------- pool party food sign-up (any logged-in user — parents included) ----------
+app.get('/api/poolparty-signups', requireLogin, (req, res) => res.json(readJSON('poolparty-signups.json')));
+app.put('/api/poolparty-signups', requireLogin, (req, res) => {
+  const signups = req.body;
+  if (typeof signups !== 'object' || Array.isArray(signups) || signups === null) {
+    return res.status(400).json({ error: 'Invalid signups format.' });
+  }
+  writeJSON('poolparty-signups.json', signups);
+  res.json({ ok: true });
+});
+
 // ---------- write endpoints (admin only) ----------
 app.put('/api/schedule', requireAdmin, (req, res) => {
   writeJSON('schedule.json', req.body);
