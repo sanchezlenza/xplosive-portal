@@ -54,12 +54,10 @@
     </div>
 
     <div class="signup-note">
-      Preview only for now — signing up here doesn't save yet. We're finishing that part next.
+      Changes here are saved and visible to every family.
     </div>
 
     <div id="categories"></div>
-
-    <div class="coming-soon">Save &amp; sign-up functionality coming soon.</div>
   </main>
 
   <script src="/js/common.js"></script>
@@ -71,7 +69,7 @@
         { id: "sandwiches-3", label: "Sandwiches", qty: "25" },
       ]},
       { name: "Croquetas", items: [
-        { id: "croquetas-1", label: "Croquetas", qty: "25", initial: "Layla" },
+        { id: "croquetas-1", label: "Croquetas", qty: "25" },
         { id: "croquetas-2", label: "Croquetas", qty: "25" },
         { id: "croquetas-3", label: "Croquetas", qty: "25" },
         { id: "croquetas-4", label: "Croquetas", qty: "25" },
@@ -79,7 +77,7 @@
         { id: "croquetas-6", label: "Croquetas", qty: "25" },
       ]},
       { name: "Popcorn chicken", items: [
-        { id: "popcorn-1", label: "Popcorn chicken", initial: "Costa" },
+        { id: "popcorn-1", label: "Popcorn chicken" },
         { id: "popcorn-2", label: "Popcorn chicken" },
         { id: "popcorn-3", label: "Popcorn chicken" },
       ]},
@@ -88,7 +86,7 @@
         { id: "coldsalads-2", label: "Cold salads" },
       ]},
       { name: "Chips", items: [
-        { id: "chips-1", label: "Chips", initial: "Xart" },
+        { id: "chips-1", label: "Chips" },
         { id: "chips-2", label: "Chips" },
         { id: "chips-3", label: "Chips" },
       ]},
@@ -97,7 +95,7 @@
         { id: "cookies-2", label: "Cookies" },
       ]},
       { name: "Fruit", items: [
-        { id: "fruit-1", label: "Fruit", initial: "Xart" },
+        { id: "fruit-1", label: "Fruit" },
         { id: "fruit-2", label: "Fruit" },
         { id: "fruit-3", label: "Fruit" },
         { id: "fruit-4", label: "Fruit" },
@@ -108,7 +106,7 @@
         { id: "soda-2", label: "Soda" },
       ]},
       { name: "Water", items: [
-        { id: "water-1", label: "Water", initial: "Layla" },
+        { id: "water-1", label: "Water" },
         { id: "water-2", label: "Water" },
       ]},
       { name: "Ice", items: [
@@ -118,11 +116,34 @@
       ]},
     ];
 
-    // Preview-only local state (not persisted — no backend wired up yet)
-    const localSignups = {};
-    categories.forEach(cat => cat.items.forEach(item => {
-      if (item.initial) localSignups[item.id] = item.initial;
-    }));
+    // Real persisted state — loaded from and saved to the server
+    let signups = {};
+
+    async function loadSignups() {
+      const res = await fetch('/api/poolparty-signups');
+      signups = await res.json();
+      renderCategories();
+    }
+
+    async function saveSignup(id, name) {
+      signups[id] = name;
+      await fetch('/api/poolparty-signups', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(signups)
+      });
+      renderCategories();
+    }
+
+    async function clearSignup(id) {
+      delete signups[id];
+      await fetch('/api/poolparty-signups', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(signups)
+      });
+      renderCategories();
+    }
 
     function renderCategories() {
       const wrap = document.getElementById('categories');
@@ -130,12 +151,12 @@
         <div class="category-block">
           <div class="category-title">${cat.name}</div>
           ${cat.items.map(item => {
-            const taken = localSignups[item.id];
+            const taken = signups[item.id];
             if (taken) {
               return `
                 <div class="food-row taken">
                   <span class="label">${item.label}${item.qty ? ` (${item.qty})` : ''}</span>
-                  <span class="taken-name" style="margin-left:auto;">${taken}</span>
+                  <span class="taken-name" style="margin-left:auto;">${escapeHtml(taken)}</span>
                   <button class="mini-btn clear" data-clear="${item.id}">Remove</button>
                 </div>
               `;
@@ -156,20 +177,32 @@
           const id = btn.getAttribute('data-save');
           const input = wrap.querySelector(`input[data-id="${id}"]`);
           const name = (input.value || '').trim();
-          if (name) { localSignups[id] = name; renderCategories(); }
+          if (name) saveSignup(id, name);
+        });
+      });
+      wrap.querySelectorAll('input[data-id]').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            const id = input.getAttribute('data-id');
+            const name = (input.value || '').trim();
+            if (name) saveSignup(id, name);
+          }
         });
       });
       wrap.querySelectorAll('[data-clear]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          delete localSignups[btn.getAttribute('data-clear')];
-          renderCategories();
-        });
+        btn.addEventListener('click', () => clearSignup(btn.getAttribute('data-clear')));
       });
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
     }
 
     initNav('/eventos.html').then(user => {
       if (!user) return;
-      renderCategories();
+      loadSignups();
     });
   </script>
 </body>
