@@ -35,6 +35,7 @@
           <h3>${e.title}</h3>
           <p class="meta">${e.date} · ${e.location}</p>
           <p>${e.description}</p>
+          ${e.link ? `<a class="link" href="${e.link}">${e.linkLabel || 'View Details'} →</a>` : ''}
         </div>
       `).join('') || '<p style="color:var(--grey)">No events posted yet.</p>';
     });

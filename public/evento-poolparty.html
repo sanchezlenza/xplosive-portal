@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pool Party — Food Sign-Up</title>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .signup-note{
+    background:var(--teal-soft); border:1px solid var(--line); border-radius:12px;
+    padding:14px 18px; font-size:13px; color:var(--teal); margin-bottom:30px;
+  }
+  .category-block{ margin-bottom:30px; }
+  .category-title{
+    font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--teal); margin-bottom:10px;
+  }
+  .food-row{
+    display:flex; align-items:center; gap:12px;
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:12px 16px; margin-bottom:8px;
+  }
+  .food-row.taken{ background:var(--teal-soft); border-color:#cdeaed; }
+  .food-row .label{ flex:0 0 auto; font-weight:600; font-size:14.5px; }
+  .food-row .qty{ color:var(--grey); font-size:12.5px; }
+  .food-row .taken-name{ color:var(--teal); font-size:13.5px; font-weight:600; }
+  .food-row input[type="text"]{
+    flex:1; border:none; background:transparent; border-bottom:1px dashed var(--line);
+    font-family:'Work Sans', sans-serif; font-size:14px; padding:6px 4px; color:var(--ink); outline:none;
+  }
+  .food-row input[type="text"]::placeholder{ color:#b6bebd; font-style:italic; }
+  .mini-btn{
+    border:none; font-family:inherit; font-size:11.5px; font-weight:700; letter-spacing:0.04em;
+    text-transform:uppercase; padding:7px 14px; border-radius:999px; cursor:pointer;
+  }
+  .mini-btn.save{ background:var(--teal); color:#fff; }
+  .mini-btn.clear{ background:none; color:var(--danger); text-decoration:underline; padding:0; }
+  .coming-soon{
+    text-align:center; font-size:12px; color:var(--grey); margin-top:34px;
+  }
+</style>
+</head>
+<body>
+  <nav class="topnav">
+    <a href="/index.html" class="brand"><img src="/images/logo.png" alt="Xplosive Dance Company" class="brand-logo"></a>
+    <div class="navlinks" id="navlinks"></div>
+  </nav>
+
+  <main style="max-width:760px;">
+    <div class="page-head">
+      <div class="eyebrow">Pool · 8/29/26</div>
+      <h1>Pool Party Food Sign-Up</h1>
+      <p>Pick an item below and add your name — every family brings something so no one has to bring it all.</p>
+    </div>
+
+    <div class="signup-note">
+      Preview only for now — signing up here doesn't save yet. We're finishing that part next.
+    </div>
+
+    <div id="categories"></div>
+
+    <div class="coming-soon">Save &amp; sign-up functionality coming soon.</div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script>
+    const categories = [
+      { name: "Sandwiches", items: [
+        { id: "sandwiches-1", label: "Sandwiches", qty: "25" },
+        { id: "sandwiches-2", label: "Sandwiches", qty: "25" },
+        { id: "sandwiches-3", label: "Sandwiches", qty: "25" },
+      ]},
+      { name: "Croquetas", items: [
+        { id: "croquetas-1", label: "Croquetas", qty: "25", initial: "Layla" },
+        { id: "croquetas-2", label: "Croquetas", qty: "25" },
+        { id: "croquetas-3", label: "Croquetas", qty: "25" },
+        { id: "croquetas-4", label: "Croquetas", qty: "25" },
+        { id: "croquetas-5", label: "Croquetas", qty: "25" },
+        { id: "croquetas-6", label: "Croquetas", qty: "25" },
+      ]},
+      { name: "Popcorn chicken", items: [
+        { id: "popcorn-1", label: "Popcorn chicken", initial: "Costa" },
+        { id: "popcorn-2", label: "Popcorn chicken" },
+        { id: "popcorn-3", label: "Popcorn chicken" },
+      ]},
+      { name: "Cold salads", items: [
+        { id: "coldsalads-1", label: "Cold salads" },
+        { id: "coldsalads-2", label: "Cold salads" },
+      ]},
+      { name: "Chips", items: [
+        { id: "chips-1", label: "Chips", initial: "Xart" },
+        { id: "chips-2", label: "Chips" },
+        { id: "chips-3", label: "Chips" },
+      ]},
+      { name: "Cookies", items: [
+        { id: "cookies-1", label: "Cookies" },
+        { id: "cookies-2", label: "Cookies" },
+      ]},
+      { name: "Fruit", items: [
+        { id: "fruit-1", label: "Fruit", initial: "Xart" },
+        { id: "fruit-2", label: "Fruit" },
+        { id: "fruit-3", label: "Fruit" },
+        { id: "fruit-4", label: "Fruit" },
+        { id: "fruit-5", label: "Fruit" },
+      ]},
+      { name: "Soda", items: [
+        { id: "soda-1", label: "Soda" },
+        { id: "soda-2", label: "Soda" },
+      ]},
+      { name: "Water", items: [
+        { id: "water-1", label: "Water", initial: "Layla" },
+        { id: "water-2", label: "Water" },
+      ]},
+      { name: "Ice", items: [
+        { id: "ice-1", label: "Ice" },
+        { id: "ice-2", label: "Ice" },
+        { id: "ice-3", label: "Ice" },
+      ]},
+    ];
+
+    // Preview-only local state (not persisted — no backend wired up yet)
+    const localSignups = {};
+    categories.forEach(cat => cat.items.forEach(item => {
+      if (item.initial) localSignups[item.id] = item.initial;
+    }));
+
+    function renderCategories() {
+      const wrap = document.getElementById('categories');
+      wrap.innerHTML = categories.map(cat => `
+        <div class="category-block">
+          <div class="category-title">${cat.name}</div>
+          ${cat.items.map(item => {
+            const taken = localSignups[item.id];
+            if (taken) {
+              return `
+                <div class="food-row taken">
+                  <span class="label">${item.label}${item.qty ? ` (${item.qty})` : ''}</span>
+                  <span class="taken-name" style="margin-left:auto;">${taken}</span>
+                  <button class="mini-btn clear" data-clear="${item.id}">Remove</button>
+                </div>
+              `;
+            }
+            return `
+              <div class="food-row">
+                <span class="label">${item.label}${item.qty ? ` (${item.qty})` : ''}</span>
+                <input type="text" placeholder="Your name..." data-id="${item.id}">
+                <button class="mini-btn save" data-save="${item.id}">Sign Up</button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `).join('');
+
+      wrap.querySelectorAll('[data-save]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-save');
+          const input = wrap.querySelector(`input[data-id="${id}"]`);
+          const name = (input.value || '').trim();
+          if (name) { localSignups[id] = name; renderCategories(); }
+        });
+      });
+      wrap.querySelectorAll('[data-clear]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          delete localSignups[btn.getAttribute('data-clear')];
+          renderCategories();
+        });
+      });
+    }
+
+    initNav('/eventos.html').then(user => {
+      if (!user) return;
+      renderCategories();
+    });
+  </script>
+</body>
+</html>
